@@ -1,4 +1,6 @@
-# Read input file
+# --------------------------------------------------------------------------------
+# Input
+# --------------------------------------------------------------------------------
 set puzzleNr    [file rootname [file tail [info script]]]
 set data        [read [open $puzzleNr\_input.txt r]]
 
@@ -13,7 +15,11 @@ for {set i 0} {$i < [llength $splitted]} {incr i 2} {
 }
 
 
+# --------------------------------------------------------------------------------
 # Question 1
+# --------------------------------------------------------------------------------
+puts $puzzleNr:a
+
 proc findValidSimple {
     {optional_byr 0}
     {optional_iyr 0}
@@ -39,11 +45,14 @@ proc findValidSimple {
     return $result
 }
 
-puts $puzzleNr:a
 puts [findValidSimple]
 
 
+# --------------------------------------------------------------------------------
 # Question 2
+# --------------------------------------------------------------------------------
+puts $puzzleNr:b
+
 proc findValidAdvanced {
     {optional_byr 0}
     {optional_iyr 0}
@@ -74,5 +83,28 @@ proc findValidAdvanced {
     return $result
 }
 
-puts $puzzleNr:b
 puts [findValidAdvanced]
+
+
+# --------------------------------------------------------------------------------
+# Solution
+# --------------------------------------------------------------------------------
+
+# 2020.04:a
+# 219
+# 2020.04:b
+# 127
+
+
+# --------------------------------------------------------------------------------
+# Notes
+# --------------------------------------------------------------------------------
+
+# The input parsing was interesting. The "normal" splitting on whitespace or newline would yield a list with empty elements as boundaries
+# between the passwords. Handier would be to split the data on the blank lines. This is done with a regex by matching any element as much
+# as possible, that may be followed by a single newline. This sequence is then again matched as many times as possible. The match ends when
+# there is more than one newline. This regex also matches the last element where there is no extra newline! Also verified with RegExr.com.
+
+# TCL regexp function is a bit strange sometimes. Without the -line switch, the above regex does not seem to work as expected.
+# The -all switch is needed to match it multiple times. The -inline switch gives a list back (instead of match vars) however it returns both
+# the overall match as the capturing groups as separate elements.
