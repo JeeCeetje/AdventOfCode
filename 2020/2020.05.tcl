@@ -16,16 +16,14 @@ proc getDecimalValue {str {zeroChar "F"} {oneChar "B"}} {
     return [expr 0b$str]
 }
 
-set maxID 0
+set ids ""
 foreach i $input {
     set row [getDecimalValue [string range $i 0 6] "F" "B"]
     set col [getDecimalValue [string range $i 7 9] "L" "R"]
-    set id  [expr $row *8 + $col]
-    if {$id > $maxID} {
-        set maxID $id
-    }
+    lappend ids [expr $row *8 + $col]
 }
-puts $maxID
+set ids [lsort -integer -increasing $ids]
+puts [lindex $ids end]
 
 
 
@@ -34,6 +32,14 @@ puts $maxID
 # --------------------------------------------------------------------------------
 puts $puzzleNr:b
 
+for {set i 0} {$i < [expr [llength $ids] - 1]} {incr i} {
+    set idA [lindex $ids $i]
+    set idB [lindex $ids [expr $i + 1]]
+    set idBexpected [expr $idA + 1]
+    if {$idB != $idBexpected} {
+        puts $idBexpected
+    }
+}
 
 
 
@@ -41,9 +47,24 @@ puts $puzzleNr:b
 # Solution
 # --------------------------------------------------------------------------------
 
-
+# 2020.05:a
+# 980
+# 2020.05:b
+# 607
 
 
 # --------------------------------------------------------------------------------
 # Notes
 # --------------------------------------------------------------------------------
+
+# The tricky thing is that we don't need to keep track of upcounting and downcounting.
+# Just parse the seat numbers as a binary value (by replacing the chars with 0 and 1).
+
+# The code of question 1 was slightly modified after question 2 was available.
+# I didn't keep a list of the results, just kept a maximum ID on the go. This was changed
+# to keeping a list, sorting it and taking out the last element. This list was then used in
+# question 2.
+
+# For question 2, as we know that the front seats aren't available but that the seat ID
+# before/after yours is present in the list. So the first ID and last ID in the list is not
+# checked.
