@@ -29,22 +29,40 @@ foreach i $input {
 puts $totalCnt
 
 
-
 # --------------------------------------------------------------------------------
 # Question 2
 # --------------------------------------------------------------------------------
 puts $puzzleNr:b
 
-
+set totalCnt 0
+foreach i $input {
+    set nrOfPeopleInGroup [llength [split [string trim $i]]]
+    foreach char [split abcdefghijklmnopqrstuvwxyz ""] {
+        if {[regexp -all $char $i] == $nrOfPeopleInGroup} {
+            incr totalCnt
+        }
+    }
+}
+puts $totalCnt
 
 
 # --------------------------------------------------------------------------------
 # Solution
 # --------------------------------------------------------------------------------
 
-
+# 2020.06:a
+# 6530
+# 2020.06:b
+# 3323
 
 
 # --------------------------------------------------------------------------------
 # Notes
 # --------------------------------------------------------------------------------
+
+# Used the split on double newline regex from 2020.04.
+# However trim before counting lines (due to the extra line).
+
+# As there is no a to z loop in TCL, create a string with all the chars and split it
+# with nothing ("") to have a list with all separate chars. List could have been created
+# manually as well of course.
