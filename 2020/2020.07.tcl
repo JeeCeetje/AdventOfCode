@@ -12,7 +12,7 @@ puts $puzzleNr:a
 
 proc findBags {myBag {alreadyFoundBags ""}} {
     foreach i $::input {
-        regexp {(.*)\sbags\s+contain\s+(.*)} $i all outerBag innerBags
+        regexp {(.*)\s+bags\s+contain\s+(.*)} $i all outerBag innerBags
         if {[regexp $myBag $innerBags]} {
             if {[lsearch $alreadyFoundBags $outerBag] < 0} {
                 lappend alreadyFoundBags $outerBag
