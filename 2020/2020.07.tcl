@@ -23,7 +23,7 @@ proc findBags {myBag {alreadyFoundBags ""}} {
     return $alreadyFoundBags;                                                           ;# Okay, done!
 }
 
-puts [llength [findBags "shiny gold"]]
+puts [time {puts [llength [findBags "shiny gold"]]}]
 
 
 # --------------------------------------------------------------------------------
@@ -51,7 +51,7 @@ proc findBagContents {myBag} {
     return 0;                                                                           ;# If the bag is not in the list...
 }
 
-puts [findBagContents "shiny gold"]
+puts [time {puts [findBagContents "shiny gold"]}]
 
 
 # --------------------------------------------------------------------------------
@@ -60,10 +60,14 @@ puts [findBagContents "shiny gold"]
 
 # 2020.07:a
 # 211
+# 5710392 microseconds per iteration
 # 2020.07:b
 # 12414
+# 759295 microseconds per iteration
 
 
 # --------------------------------------------------------------------------------
 # Notes
 # --------------------------------------------------------------------------------
+
+# Tried the recursive way. Not sure if it is the best way to go for question 1 as it takes almost 6 seconds.
