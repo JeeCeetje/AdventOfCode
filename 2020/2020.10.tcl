@@ -33,7 +33,49 @@ puts [expr $joltDiff(1) * $joltDiff(3)]
 # --------------------------------------------------------------------------------
 puts $puzzleNr:b
 
+set sortedInput [linsert $sortedInput 0 0]          ;# Add the outlet in front of the list
 
+set diffInput ""                                    ;# Create a list of the jolt jumps instead of the absolute values
+for {set i 0} {$i < [expr [llength $sortedInput]]} {incr i} {
+    lappend diffInput [expr [lindex $sortedInput [expr $i + 1]] - [lindex $sortedInput $i]]
+}
+
+set runLengthInput ""                               ;# Create a list of the run lengths of single jolt jumps (we're not interested in the 3 jolt jumps, as they must stay in the reordening)
+set currRun 0
+foreach i $diffInput {
+    if {$i == 1} {
+        incr currRun
+    } elseif {$currRun > 0} {
+        lappend runLengthInput [expr $currRun + 1]  ;# Add one because e.g. 3x 1 jolt jumps relate to 4 numbers
+        set currRun 0
+    }
+}
+
+
+proc getNumberOfCombinations {runLength} {
+    set runLength [expr $runLength-2]               ;# The two outer adapters are connected to the 3 jolt jumps and would break a valid chain, so they must stay, don't use them in the permutations
+    if {$runLength <= 0} {                          ;# If we have nothing left to play with...
+        return 1                                    ;# then only a single combination is possible; the 'normal' nonpermuted one
+    }
+    set combinations ""                             ;# Represent the permuations as binary strings
+    for {set i 0} {$i < [expr 2**$runLength]} {incr i} {
+        lappend combinations [format %0[subst $runLength]b $i]
+    }
+    set validCombinations 0
+    foreach c $combinations {
+        if {![regexp {000} $c]} {                   ;# If the binary string contains at least 3 zeroes in a row, it is invalid
+            incr validCombinations
+        }
+    }
+    return $validCombinations
+}
+
+
+set nrOfCombinations 1
+foreach j $runLengthInput {
+    set nrOfCombinations [expr $nrOfCombinations * [getNumberOfCombinations $j]]
+}
+puts $nrOfCombinations
 
 
 # --------------------------------------------------------------------------------
@@ -42,6 +84,8 @@ puts $puzzleNr:b
 
 # 2020.10:a
 # 2244
+# 2020.10:b
+# 3947645370368
 
 
 # --------------------------------------------------------------------------------
