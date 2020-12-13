@@ -3,6 +3,7 @@
 # --------------------------------------------------------------------------------
 set puzzleNr    [file rootname [file tail [info script]]]
 set input       [split [read [open $puzzleNr\_input.txt r]] \n]
+# set input       [split [read [open $puzzleNr\_example.txt r]] \n]
 
 
 # --------------------------------------------------------------------------------
@@ -34,43 +35,31 @@ puts [expr $minimumWaitTime * $chosenBusID]
 # --------------------------------------------------------------------------------
 puts $puzzleNr:b
 
-set busses ""                                                   ;# Create a list of the relevant busses and their offset
+set busses ""                                                       ;# Create a list of the relevant busses
 for {set i 0} {$i < [llength $busIDs]} {incr i} {
     if {[lindex $busIDs $i] == "x"} {
         continue
     }
-    lappend busses "$i [lindex $busIDs $i]"                     ;# (offset, busID)
+    set modulus     [lindex $busIDs $i]
+    set remainder   [expr ($modulus-$i)%$modulus]                   ;# The %modulus is needed when i = 0, otherwise remainer = modulus which is incorrrect
+    lappend busses "$remainder $modulus"                            ;# (remainder, modulus)
 }
 
-set sortedBusses [lsort -integer -decreasing -index 1 $busses]  ;# Sort that list on the largest busID
+set sortedBusses [lsort -integer -decreasing -index 1 $busses]      ;# Sort that list, decreasing, on the busID or modulus
 
-
-set highestBusId        [lindex [lindex $sortedBusses 0] 1]     ;# Grab and save the highest busId from that list
-set highestBusIdOffset  [lindex [lindex $sortedBusses 0] 0]
-set sortedBusses        [lreplace $sortedBusses 0 0]            ;# Remove it from the list itself
-set nrOfBusses          [llength $sortedBusses]
-
-
-set startingPoint 100000000000000                               ;# Use the tip from the riddle
-set i [expr $startingPoint/$highestBusId]
-
-set runTime [time {
-set found $nrOfBusses
-while {$found} {                                                ;# The result is found when the found counter becomes 0
-    incr i
-    set result [expr $i*$highestBusId - $highestBusIdOffset]    ;# Speed up by multiplying with the largest number
-    set found $nrOfBusses
-    foreach bus $sortedBusses {                                 ;# Test each bus but stop as soon as one fails
-        if {!([expr ($result+[lindex $bus 0])%[lindex $bus 1]] == 0)} {
-            break
-        }
-        incr found -1
+# Chinese remainder theorem                                         ;# "Search by sieving"
+set searchValue     [lindex [lindex $sortedBusses 0] 0]             ;# Start with the remainder of the largest modulus
+set incrementValue  1                                               ;# Will be set in the loop, it's the multiplication of the moduli
+for {set i 0} {$i < [expr [llength $sortedBusses]-1]} {incr i} {
+    set incrementValue  [expr $incrementValue * [lindex [lindex $sortedBusses $i] 1]]
+    set nextModulus     [lindex [lindex $sortedBusses [expr $i+1]] 1]
+    set nextRemainder   [lindex [lindex $sortedBusses [expr $i+1]] 0]
+    while {[expr $searchValue % $nextModulus] != $nextRemainder} {  ;# As long as the current value doesn't result in the next remainder with the next modulus, ...
+        incr searchValue $incrementValue                            ;# ...increment with the increment value (which is the current multiplication of the moduli).
     }
 }
-}]
 
-puts [expr $i*$highestBusId - $highestBusIdOffset]
-puts $runTime
+puts $searchValue
 
 
 # --------------------------------------------------------------------------------
@@ -79,10 +68,19 @@ puts $runTime
 
 # 2020.13:a
 # 2095
+# 2020.13:b
+# 598411311431841
 
 
 # --------------------------------------------------------------------------------
 # Notes
 # --------------------------------------------------------------------------------
 
-# WARNING: question 2 works for the examples but takes AGES to complete for the real deal...
+# Question 2: Before the tip was given that the bus IDs were prime numbers, a more brute force way of doing it was used.
+# That method worked, fast even for the examples but takes AGES to complete for the real deal...
+# Literally, so no solution would be found. However I was on the right track, using moduli (like in the first question)
+# and sorting them on decreasing value and working towards the solution. See previous revision of the code.
+# This puzzle was not only about programming, it was also about a mathematical solution; the Chinese remainder theorem.
+# I wouldn't have found the solution on my own, but after reading the wiki (https://en.wikipedia.org/wiki/Chinese_remainder_theorem),
+# I settled with the "search by sieving" method. While the method wasn't described as very efficient and typically (quote) "not used
+# on computers", implementing the method seemed well withing the typical scope of the AoC puzzles. A solution was found within the second.
