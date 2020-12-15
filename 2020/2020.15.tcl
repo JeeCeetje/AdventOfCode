@@ -44,6 +44,14 @@ puts $lastSpoken
 # --------------------------------------------------------------------------------
 puts $puzzleNr:b
 
+puts [time {
+while {$spoken(turn) < [expr 30000000 - 1]} {
+    set lastSpoken [speak $lastSpoken]
+}
+}]
+
+puts $lastSpoken
+
 
 # --------------------------------------------------------------------------------
 # Solution
@@ -51,8 +59,13 @@ puts $puzzleNr:b
 
 # 2020.15:a
 # 249
+# 2020.15:b
+# 118443715 microseconds per iteration
+# 41687
 
 
 # --------------------------------------------------------------------------------
 # Notes
 # --------------------------------------------------------------------------------
+
+# Question 2, again not the fastest method... Takes almost 2 minutes to complete.
