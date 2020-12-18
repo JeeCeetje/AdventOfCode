@@ -2,8 +2,8 @@
 # Input
 # --------------------------------------------------------------------------------
 set puzzleNr    [file rootname [file tail [info script]]]
-# set input       [read [open $puzzleNr\_input.txt r]]
-set input       [read [open $puzzleNr\_example.txt r]]
+set input       [read [open $puzzleNr\_input.txt r]]
+# set input       [read [open $puzzleNr\_example.txt r]]
 
 
 # --------------------------------------------------------------------------------
@@ -140,7 +140,8 @@ puts $puzzleNr:b
 # Solution
 # --------------------------------------------------------------------------------
 
-
+# 2020.17:a
+# 269
 
 
 # --------------------------------------------------------------------------------
