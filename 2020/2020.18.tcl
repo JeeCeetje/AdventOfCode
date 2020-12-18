@@ -15,14 +15,14 @@ regsub -all -line { } $input "" input                       ;# Remove all spaces
 set input [split $input \n]
 
 
-proc calculate {expression {index 0}} {
+proc calculate {expressionList {index 0}} {
     set result   0
     set operator +
-    for {} {$index < [llength $expression]} {incr index} {
-        set element [lindex $expression $index]
+    for {} {$index < [llength $expressionList]} {incr index} {
+        set element [lindex $expressionList $index]
         switch $element {
             "(" {
-                set subresult [calculate $expression [expr $index+1]]
+                set subresult [calculate $expressionList [expr $index+1]]
                 set result [expr $result $operator [lindex $subresult 0]]
                 set index [lindex $subresult 1]
             }
@@ -55,7 +55,34 @@ puts $sum
 # --------------------------------------------------------------------------------
 puts $puzzleNr:b
 
+set precedenceOrder ""
+lappend precedenceOrder {(\()(\d+)(\))}                     ;# Integer in brackets => supercool by putting e.g. (5) in expr, it will return 5
+lappend precedenceOrder {\((\d+)(\+)(\d+)\)}                ;# Sum in brackets => supercool by matching the + as a char and putting it in a var, we can use it in expr
+lappend precedenceOrder {\((\d+)(\*)(\d+)\)}                ;# Mult in brackets
+lappend precedenceOrder {(\d+)(\+)(\d+)}                    ;# Sum outside brackets
+lappend precedenceOrder {(\d+)(\*)(\d+)}                    ;# Mult outside brackets
 
+
+proc calculateAdvanced {expressionString} {                 ;# Do checks on multiple digits as the subresult will be larger than single digits
+    for {set i 0} {$i < [llength $::precedenceOrder]} {} {
+        if {[regexp [lindex $::precedenceOrder $i] $expressionString all a op b]} {
+            regsub [lindex $::precedenceOrder $i] $expressionString [expr $a $op $b] expressionString
+            set i 0
+            # puts $expressionString
+        } else {
+            incr i
+        }
+    }
+    # puts ""
+    return $expressionString
+}
+
+
+set sum 0
+foreach i $input {
+    incr sum [calculateAdvanced $i]
+}
+puts $sum
 
 
 # --------------------------------------------------------------------------------
