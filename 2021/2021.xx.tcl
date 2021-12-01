@@ -4,29 +4,33 @@
 set puzzleNr    [file rootname [file tail [info script]]]
 set input       [split [read [open $puzzleNr\_input.txt r]] \n]
 # set input       [split [read [open $puzzleNr\_example.txt r]] \n]
+set len         [llength $input]
+
 
 
 # --------------------------------------------------------------------------------
-# Question 1
+# Question A
 # --------------------------------------------------------------------------------
 puts $puzzleNr:a
+set resultA 0
+
+puts $resultA
 
 
 
 # --------------------------------------------------------------------------------
-# Question 2
+# Question B
 # --------------------------------------------------------------------------------
 puts $puzzleNr:b
+set resultB 0
+
+puts $resultB
 
 
 
 # --------------------------------------------------------------------------------
 # Solution
 # --------------------------------------------------------------------------------
-
-# Question 1
-
-# Question 2
 
 
 
