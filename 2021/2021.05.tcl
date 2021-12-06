@@ -12,20 +12,7 @@ set len         [llength $input]
 # Question A
 # --------------------------------------------------------------------------------
 puts $puzzleNr:a
-
-# Field size (in X and Y directions)
-if {$len <=10 } {
-    set size 10     ;# For example
-} else {
-    set size 1000   ;# For input
-}
-
-# Init field
-for {set y 0} {$y < $size} {incr y} {
-    for {set x 0} {$x < $size} {incr x} {
-        set field($y,$x) 0
-    }
-}
+set resultA 0
 
 # Read input and find horizontal and vertical lines only
 foreach i $input {
@@ -38,6 +25,9 @@ foreach i $input {
         }
         for {} {$y1 <= $y2} {incr y1} {
             incr field($x1,$y1)
+            if {$field($x1,$y1) == 2} {
+                incr resultA
+            }
         }
     } elseif {$y1 == $y2} {
         if {$x1 > $x2} {
@@ -47,16 +37,9 @@ foreach i $input {
         }
         for {} {$x1 <= $x2} {incr x1} {
             incr field($x1,$y1)
-        }
-    }
-}
-
-# Count the number of overlaps
-set resultA 0
-for {set y 0} {$y < $size} {incr y} {
-    for {set x 0} {$x < $size} {incr x} {
-        if {$field($x,$y) >= 2} {
-            incr resultA
+            if {$field($x1,$y1) == 2} {
+                incr resultA
+            }
         }
     }
 }
@@ -69,6 +52,7 @@ puts $resultA
 # Question B
 # --------------------------------------------------------------------------------
 puts $puzzleNr:b
+set resultB $resultA
 
 # Read input and find diagonal lines only
 foreach i $input {
@@ -85,16 +69,9 @@ foreach i $input {
         }
         for {} {$x1 <= $x2} {incr x1; incr y1 $yIncr} {
             incr field($x1,$y1)
-        }
-    }
-}
-
-# Count the number of overlaps
-set resultB 0
-for {set y 0} {$y < $size} {incr y} {
-    for {set x 0} {$x < $size} {incr x} {
-        if {$field($x,$y) >= 2} {
-            incr resultB
+            if {$field($x1,$y1) == 2} {
+                incr resultB
+            }
         }
     }
 }
